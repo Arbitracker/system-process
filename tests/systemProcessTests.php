@@ -151,7 +151,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
     {
         $process = new pbsSystemProcess( './workingDirectoryTest.sh' );
         $this->assertEquals( 
-            $process->workingDirectory( __DIR__ . '/data' . '/systemProcess' )
+            $process->workingDirectory( __DIR__ . '/data' )
                     ->execute(),
             0
         );
@@ -189,7 +189,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testCustomDescriptor() 
     {
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/systemProcess/fileDescriptorTest' );
+        $process = new pbsSystemProcess( __DIR__ . '/data' . '/fileDescriptorTest' );
         $pipes = $process->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
                          ->descriptor( 5, pbsSystemProcess::PIPE, 'w' )
                          ->execute( true );
@@ -211,7 +211,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
     public function testCustomDescriptorToFile() 
     {
         $tmpfile = tempnam( sys_get_temp_dir(), "pbs" );
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/systemProcess/fileDescriptorTest' );
+        $process = new pbsSystemProcess( __DIR__ . '/data' . '/fileDescriptorTest' );
         $pipes = $process->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
                          ->descriptor( 5, pbsSystemProcess::FILE, $tmpfile, 'a' )
                          ->execute( true );
@@ -243,7 +243,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testSignal() 
     {
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/systemProcess/signalTest.php' );
+        $process = new pbsSystemProcess( __DIR__ . '/data' . '/signalTest.php' );
         $pipes = $process->execute( true );
         $output = '';
         while( !feof( $pipes[1] ) ) 
@@ -268,7 +268,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
                 ->pipe( new pbsSystemProcess( 'baz' ) )
                 ->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR )
                 ->environment( array( 'foobar' => '42' ) )
-                ->workingDirectory( __DIR__ . '/data' . '/systemProcess' )
+                ->workingDirectory( __DIR__ . '/data' )
                 ->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
                 ->argument( '23' );
     }
