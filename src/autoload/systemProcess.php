@@ -5,4 +5,5 @@ return array(
     'pbsSystemProcessNotRunningException'                   =>  'exceptions/systemProcess/notRunning.php',
     'pbsSystemProcessInvalidCustomDescriptorException'      =>  'exceptions/systemProcess/invalidCustomDescriptor.php',
     'pbsSystemProcessRecursivePipeException'                =>  'exceptions/systemProcess/recursivePipe.php',
+    'pbsSystemProcessNonZeroExitCodeException'              =>  'exceptions/systemProcess/nonZeroExitCode.php',
 );

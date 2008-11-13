@@ -89,10 +89,7 @@ class pbsSystemProcess
      * 
      * @var array
      */
-    protected $attributes = array( 
-        'stdoutOutput'  =>  '',
-        'stderrOutput'  =>  ''
-    );    
+    protected $attributes = array(); 
 
     /**
      * Array containing all parts of the constructed command including their
@@ -154,11 +151,17 @@ class pbsSystemProcess
     /**
      * Class constructor taking the executable
      * 
-     * @param string $executable Executable to create system process for
+     * @param string $executable Executable to create system process for;
      * @return void
      */
     public function __construct( $executable ) 
     {
+        $this->attributes = array( 
+            'stdoutOutput'          =>  '',
+            'stderrOutput'          =>  '',
+            'nonZeroExitCodeException'   => false,
+        );    
+
         $this->commandParts[] = array( self::EXECUTABLE, $executable );
     }
 
@@ -179,6 +182,9 @@ class pbsSystemProcess
         // None of the attributes are writeable
         switch( $k ) 
         {
+            case 'nonZeroExitCodeException':
+                $this->attributes['nonZeroExitCodeException'] = (bool)$v;
+            break;
             default:
                 throw new pbsAttributeException( pbsAttributeException::WRITE, $k );
         }
@@ -342,9 +348,10 @@ class pbsSystemProcess
      * @param bool $asyncronous Whether the execution is asynronous or not.
      * @return mixed If asyncronous is true an array with all the pipes will be
      * returned. If asyncronous is false the exitcode of the application will
-     * be returned after the process has finished its execution. False is
-     * returned on an error. The error message can be obtained using
-     * stderrOutput.
+     * be returned after the process has finished its execution. If
+     * nonZeroExitCodeException is set to true a pbsNonZeroExitCodeException will
+     * be thrown. False is returned on an error. The error message can be
+     * obtained using stderrOutput.
      */
     public function execute( $asyncronous = false )
     {
@@ -437,7 +444,13 @@ class pbsSystemProcess
         }
 
         // Wait until the process is finished and close it
-        return $this->close();
+        $retVal = $this->close();
+
+        if ( $retVal !== 0 && $this->attributes['nonZeroExitCodeException'] === true ) 
+        {
+            throw new pbsSystemProcessNonZeroExitCodeException( $command, $retVal );
+        }        
+        return $retVal;
     }
 
     /**

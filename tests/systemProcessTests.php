@@ -272,4 +272,20 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
                 ->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
                 ->argument( '23' );
     }
+
+    public function testNonZeroReturnCodeException() 
+    {
+        $process = new pbsSystemProcess( 'exit' );
+        $process->nonZeroExitCodeException = true;
+        $process->argument( '1' );
+        try 
+        {
+            $process->execute();
+            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
+        }
+        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
+        {
+            /* Expected exception */
+        }
+    }
 }
