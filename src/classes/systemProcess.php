@@ -350,8 +350,7 @@ class pbsSystemProcess
      * returned. If asyncronous is false the exitcode of the application will
      * be returned after the process has finished its execution. If
      * nonZeroExitCodeException is set to true a pbsNonZeroExitCodeException will
-     * be thrown. False is returned on an error. The error message can be
-     * obtained using stderrOutput.
+     * be thrown.
      */
     public function execute( $asyncronous = false )
     {
@@ -388,10 +387,7 @@ class pbsSystemProcess
             $w = null;
             $e = null;
             
-            if ( ( $num = stream_select( $r, $w, $e, null ) ) === false ) 
-            {
-                return false;
-            }
+            $num = stream_select( $r, $w, $e, null );            
 
             // Map the handles to their fd index
             $readableHandles = array();
