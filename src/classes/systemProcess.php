@@ -22,6 +22,57 @@
 
 /**
  * Management facility for any external system process.
+ *
+ * SystemProcess is general purpose proc_open wrapper which provides all means
+ * to easily specify and execute external commands from your php script.
+ *
+ * It was designed providing great flexibility combined a maximum of comfort.
+ * The fluent interface pattern is used to provide an easy and readable way of
+ * defining complex commandstrings as well as simple ones. There is no need to
+ * handle the escaping of your arguments as this will be done automatically.
+ *
+ * The constructor takes the executable to run as an argument. The following
+ * example will execute the command "echo" with the two arguments "foo" and
+ * "bar":
+ * <code>
+ * <?php
+ * $p = new pbsSystemProcess( 'echo' );
+ * $p->argument( 'foo' )->argument( 'bar' );
+ * $returnCode = $p->->execute();
+ * ?>
+ * </code>
+ * As you can see the fluent interface is used to combine the argument calls in
+ * a readable way.
+ * 
+ * Quite complex constructs containing redirects, pipes or even custom
+ * file descriptors are possible too. They can be realized with nearly no
+ * effort.
+ * <code>
+ * <?php
+ * $consumer  = new pbsSystemProcess( 'cat' );
+ * $consumer->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
+ *
+ * $provider  = new pbsSystemProcess( 'echo' );
+ * $provider->nonZeroExitCodeException = true;
+ * $provider->argument( 'foobar' )
+ *          ->pipe( $consumer )
+ *          ->execute();
+ * 
+ * var_dump( $provider->stderrOutput );
+ * ?>
+ * </code>
+ * As you can see even complex commands are still quite readable. If the
+ * attribute "nonZeroExitCodeException" is set to true an exception will be
+ * thrown instead of just returning a non zero exit code. This exception will
+ * contain the stdout- and stderrOutput as well as the executed command string.
+ * 
+ * In case you need asyncronous execution call the execute function with the
+ * first argument set to "true". You will get a set of pipes in return which you
+ * can work with like any other stream in php.
+ * 
+ * More advanced functionallity like sending signals to running processes is
+ * available also. Take a look at the api documentation for these type of
+ * methods.
  * 
  * @version //autogen//
  * @copyright Copyright (C) 2008 Jakob Westhoff. All rights reserved.
