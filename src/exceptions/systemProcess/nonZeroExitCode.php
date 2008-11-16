@@ -10,14 +10,18 @@
  */
 class pbsSystemProcessNonZeroExitCodeException extends Exception 
 {
-    public $command;
     public $exitCode;
+    public $stdoutOutput;
+    public $stderrOutput;
+    public $command;
 
-    public function __construct( $command, $exitCode ) 
+    public function __construct( $exitCode, $stdoutOutput, $stderrOutput, $command ) 
     {
-        parent::__construct( 'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ' ) has been returned.' );
-        $this->command = $command;
+        parent::__construct( 'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ') has been returned.' );
         $this->exitCode = $exitCode;
+        $this->stdoutOutput = $stdoutOutput;
+        $this->stderrOutput = $stderrOutput;
+        $this->command = $command;
     }
 }
 

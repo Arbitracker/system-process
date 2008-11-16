@@ -288,4 +288,47 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             /* Expected exception */
         }
     }
+
+    public function testNonZeroReturnCodeExceptionStdout() 
+    {
+        $process = new pbsSystemProcess( __DIR__ . '/data' . '/nonZeroExitCodeOutputTest.sh' );
+        $process->nonZeroExitCodeException = true;
+        $process->argument( 'foobar' );
+        
+        try 
+        {
+            $process->execute();
+            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
+        }
+        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
+        {
+            /* Expected exception */
+            $this->assertEquals( 
+                "foobar", $e->stdoutOutput,
+                "Expected stdoutOutput not available in exception."
+            );
+        }
+    }
+    
+    public function testNonZeroReturnCodeExceptionStderr() 
+    {
+        $process = new pbsSystemProcess( __DIR__ . '/data' . '/nonZeroExitCodeOutputTest.sh' );
+        $process->nonZeroExitCodeException = true;
+        $process->argument( 'foobar' );
+        $process->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
+        
+        try 
+        {
+            $process->execute();
+            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
+        }
+        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
+        {
+            /* Expected exception */
+            $this->assertEquals( 
+                "foobar", $e->stderrOutput,
+                "Expected stderrOutput not available in exception."
+            );
+        }
+    }
 }

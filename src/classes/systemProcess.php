@@ -128,20 +128,6 @@ class pbsSystemProcess
     protected $customDescriptors = array();
 
     /**
-     * Collected output of the running process
-     * 
-     * @var string
-     */
-    protected $stdoutOutput = '';
-
-    /**
-     * Collected error output of the running process 
-     * 
-     * @var string
-     */
-    protected $stderrOutput = '';
-
-    /**
      * The process handle of the currently running process
      * 
      * @var resource
@@ -444,7 +430,12 @@ class pbsSystemProcess
 
         if ( $retVal !== 0 && $this->attributes['nonZeroExitCodeException'] === true ) 
         {
-            throw new pbsSystemProcessNonZeroExitCodeException( $command, $retVal );
+            throw new pbsSystemProcessNonZeroExitCodeException( 
+                $retVal, 
+                $this->attributes['stdoutOutput'], 
+                $this->attributes['stderrOutput'],
+                $command 
+            );
         }        
         return $retVal;
     }
