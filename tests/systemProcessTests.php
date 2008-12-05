@@ -343,4 +343,44 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             'Magic __toString conversion did not return expected result.'
         );
     }
+
+    public function testNonZeroExitCodeExceptionStdErrTruncate() 
+    {
+        $err = array();
+        for( $i = 0; $i <= 100; ++$i ) 
+        {
+            $err[] = (string)$i;
+        }
+        $e = new pbsSystemProcessNonZeroExitCodeException( 
+            1,
+            'foobar',
+            implode( PHP_EOL, $err ),
+            'command'
+        );
+
+        $this->assertEquals( 
+            52, count( explode( PHP_EOL, $e->getMessage() ) ),
+            "NonZeroExitCodeException did not truncate stderr correctly"
+        );
+    }
+
+    public function testNonZeroExitCodeExceptionStdErrNoTruncate() 
+    {
+        $err = array();
+        for( $i = 0; $i <= 49; ++$i ) 
+        {
+            $err[] = (string)$i;
+        }
+        $e = new pbsSystemProcessNonZeroExitCodeException( 
+            1,
+            'foobar',
+            implode( PHP_EOL, $err ),
+            'command'
+        );
+
+        $this->assertEquals( 
+            51, count( explode( PHP_EOL, $e->getMessage() ) ),
+            "NonZeroExitCodeException truncated a stderr message to small for trucating"
+        );
+    }
 }

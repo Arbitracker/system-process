@@ -17,7 +17,19 @@ class pbsSystemProcessNonZeroExitCodeException extends Exception
 
     public function __construct( $exitCode, $stdoutOutput, $stderrOutput, $command ) 
     {
-        parent::__construct( 'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ') has been returned.' );
+        // Generate a useful error message including the stderr output cutoff
+        // after 50 lines max.
+        $truncatedStderrOutput = implode( PHP_EOL, array_slice( ( $exploded = explode( PHP_EOL, $stderrOutput ) ), 0, 50 ) )
+                               . ( 
+                                   ( count( $exploded ) > 50  )
+                                 ? ( PHP_EOL . "... truncated after 50 lines ..." )
+                                 : ( "" )
+                               );
+
+        parent::__construct( 
+            'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ') has been returned:' . "\n" . $truncatedStderrOutput
+        );
+
         $this->exitCode = $exitCode;
         $this->stdoutOutput = $stdoutOutput;
         $this->stderrOutput = $stderrOutput;
