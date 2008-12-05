@@ -38,7 +38,7 @@
  * <?php
  * $p = new pbsSystemProcess( 'echo' );
  * $p->argument( 'foo' )->argument( 'bar' );
- * $returnCode = $p->->execute();
+ * $returnCode = $p->execute();
  * ?>
  * </code>
  * As you can see the fluent interface is used to combine the argument calls in
@@ -69,6 +69,24 @@
  * In case you need asyncronous execution call the execute function with the
  * first argument set to "true". You will get a set of pipes in return which you
  * can work with like any other stream in php.
+ *
+ * If you just want to use this classes api to generate the shell commands, but
+ * do have no intention to actually execute it you can use the __toString()
+ * functionallity of SystemProcess. An explicit conversion of this object to
+ * string will give you the string context as well, as a use in any string
+ * context like printf.
+ * <code>
+ * <?php
+ * $p = new pbsSystemProcess( 'echo' );
+ * $p->argument( 'foo' )
+ *   ->argument( 'bar' )
+ *
+ * // Store command to a variable
+ * $command = (string)$p;
+ * // Or print it out
+ * echo $p, "\n";
+ * ?>
+ * </code>
  * 
  * More advanced functionallity like sending signals to running processes is
  * available also. Take a look at the api documentation for these type of
@@ -246,6 +264,19 @@ class pbsSystemProcess
             default:
                 return $this->attributes[$k];
         }
+    }
+
+    /**
+     * Convert the systemProcess object to a useful string representation.
+     * 
+     * In this case the command string which would be executed, if the
+     * exececute function is called, will be returned
+     * 
+     * @return string
+     */
+    public function __toString() 
+    {
+        return $this->buildCommand( $this->commandParts );   
     }
 
     /**

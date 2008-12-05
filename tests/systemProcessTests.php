@@ -331,4 +331,16 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             );
         }
     }
+
+    public function testToStringMagicMethod() 
+    {
+        $process = new pbsSystemProcess( 'someCommand' );
+        $process->argument( 'someArgument' )
+                ->argument( '42' )
+                ->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
+        $this->assertEquals( 
+            "someCommand 'someArgument' '42' 1>&2", (string)$process,
+            'Magic __toString conversion did not return expected result.'
+        );
+    }
 }
