@@ -212,8 +212,8 @@ class pbsSystemProcess
     public function __construct( $executable ) 
     {
         $this->attributes = array( 
-            'stdoutOutput'          =>  '',
-            'stderrOutput'          =>  '',
+            'stdoutOutput'               =>  '',
+            'stderrOutput'               =>  '',
             'nonZeroExitCodeException'   => false,
         );    
 
