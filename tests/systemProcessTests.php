@@ -1,4 +1,5 @@
 <?php
+require_once( __DIR__ . '/environment.php' );
 
 class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 {
