@@ -15,8 +15,5 @@ pcntl_signal( SIGUSR1, 'signal_handler' );
 
 echo "ready";
 
-// Wait the maximum of 1 second
-while ( true )
-{
-    sleep( 1 );
-}
+// Wait the maximum of 2 second
+sleep( 2 );
