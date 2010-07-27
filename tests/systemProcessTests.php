@@ -353,14 +353,14 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
         if ( self::$win )
         {
-            $this->assertEquals( 
+            $this->assertEquals(
                 'someCommand "someArgument" "42" 1>&2', (string)$process,
                 'Magic __toString conversion did not return expected result.'
             );
         }
         else
         {
-            $this->assertEquals( 
+            $this->assertEquals(
                 "someCommand 'someArgument' '42' 1>&2", (string)$process,
                 'Magic __toString conversion did not return expected result.'
             );
@@ -407,7 +407,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPathArgument() 
+    public function testPathArgument()
     {
         $process = new pbsSystemProcess( 'php tests/bin/cat' );
         $process->argument( new pbsPathArgument( 'tests/data/workingDirectoryTest.sh' ) );
