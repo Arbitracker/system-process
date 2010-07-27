@@ -47,17 +47,8 @@ class pbsEscapedArgument extends pbsArgument
             // Let's hope there are not too many cmd injection vulnaribilities. 
             // But since the shell does not parse the arguments anyways, but 
             // only the target tool, it shouldn't hurt too much.
-            $this->value = str_replace(
-                array(
-                    '\\',
-                    '%',
-                ),
-                array(
-                    '\\\\',
-                    '"%"',
-                ),
-                $this->value
-            );
+            $this->value = str_replace( '%', '"%"', $this->value );
+            $this->value = preg_replace( '(\\\\$)', '\\\\\\\\', $this->value );
 
             return '"' . $this->value . '"';
         }
