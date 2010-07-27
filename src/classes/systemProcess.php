@@ -382,6 +382,11 @@ class pbsSystemProcess
      */
     public function workingDirectory( $cwd ) 
     {
+        if ( strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' )
+        {
+            $cwd = str_replace( '/', '\\', $cwd );
+        }
+
         $this->workingDirectory = $cwd;
         return $this;
     }

@@ -41,9 +41,25 @@ class pbsEscapedArgument extends pbsArgument
     {
         if ( strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' )
         {
-            // Backslashes require additional escaping on windows, which is not 
-            // handled by escapeshellarg itself.
-            $this->value = str_replace( '\\', '\\\\', $this->value );
+            // escapeshellarg() is entirely incapeable of escaping shell args 
+            // on windows - it strips out % and ", f.e. We do this ourselves:
+            //
+            // Let's hope there are not too many cmd injection vulnaribilities. 
+            // But since the shell does not parse the arguments anyways, but 
+            // only the target tool, it shouldn't hurt too much.
+            $this->value = str_replace(
+                array(
+                    '\\',
+                    '%',
+                ),
+                array(
+                    '\\\\',
+                    '"%"',
+                ),
+                $this->value
+            );
+
+            return '"' . $this->value . '"';
         }
 
         return escapeshellarg( $this->value );
