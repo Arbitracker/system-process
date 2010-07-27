@@ -19,22 +19,9 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
     public function testInvalidExecutable() 
     {       
         $process = new pbsSystemProcess( __DIR__ . '/data' . '/not_existant_file' );
-        $this->assertEquals( $process->execute(), 127 );
+        $this->assertNotEquals( $process->execute(), 0 );
         $this->assertEquals( "", $process->stdoutOutput );
-        $this->assertEquals( "sh: ", substr( $process->stderrOutput, 0, 4 ) );
-        // We need to make different checks based on the system language
-        switch( substr( getenv( 'LANG' ), 0, 5 ) ) 
-        {
-            case 'de_DE':
-                $this->assertEquals( "not_existant_file: Datei oder Verzeichnis nicht gefunden\n", substr( $process->stderrOutput, -57 ) );
-            break;
-            case 'en_EN':
-            case 'en_US':
-                $this->assertEquals( "not_existant_file: No such file or directory\n", substr( $process->stderrOutput, -45 ) );
-            break;
-            default:
-                $this->markTestSkipped('System language can not be determined. Or no testcase is implemented for your system language.');
-        }
+        $this->assertNotSame( false, strpos( $process->stderrOutput, 'not_existant_file' ) );
     }
 
     public function testOneSimpleArgument() 
