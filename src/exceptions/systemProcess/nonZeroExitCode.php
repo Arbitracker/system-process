@@ -27,7 +27,7 @@ class pbsSystemProcessNonZeroExitCodeException extends Exception
                                );
 
         parent::__construct( 
-            'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ') has been returned:' . "\n" . $truncatedStderrOutput
+            'During the execution of "' . $command . '" a non zero exit code (' . $exitCode . ') has been returned:' . PHP_EOL . $truncatedStderrOutput
         );
 
         $this->exitCode = $exitCode;
