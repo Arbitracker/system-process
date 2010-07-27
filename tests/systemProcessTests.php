@@ -102,12 +102,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testSimplePipe() 
     {
-        if ( self::$win )
-        {
-            $this->markTestSkipped( 'Test skipped, because Windows does not know `cat`.' );
-        }
-
-        $outputProcess = new pbsSystemProcess( 'cat' );
+        $outputProcess = new pbsSystemProcess( 'php tests/bin/cat' );
         $process       = new pbsSystemProcess( 'php tests/bin/echo' );
         $process->argument( 'foobar' )
                 ->pipe( $outputProcess );
@@ -176,12 +171,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testWriteToStdin() 
     {
-        if ( self::$win )
-        {
-            $this->markTestSkipped( 'Test skipped, because Windows does not know `cat`.' );
-        }
-
-        $process = new pbsSystemProcess( 'cat' );
+        $process = new pbsSystemProcess( 'php tests/bin/cat' );
         $pipes = $process->execute( true );
         fwrite( $pipes[0], "foobar" );
         fclose( $pipes[0] );
