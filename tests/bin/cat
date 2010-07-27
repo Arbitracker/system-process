@@ -1,0 +1,4 @@
+<?php
+
+fpassthru( STDIN );
+
