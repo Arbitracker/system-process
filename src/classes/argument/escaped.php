@@ -39,6 +39,13 @@ class pbsEscapedArgument extends pbsArgument
      */
     public function getPrepared()
     {
+        if ( strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' )
+        {
+            // Backslashes require additional escaping on windows, which is not 
+            // handled by escapeshellarg itself.
+            $this->value = str_replace( '\\', '\\\\', $this->value );
+        }
+
         return escapeshellarg( $this->value );
     }
 }
