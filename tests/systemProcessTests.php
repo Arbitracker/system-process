@@ -406,4 +406,16 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             "NonZeroExitCodeException truncated a stderr message to small for trucating"
         );
     }
+
+    public function testPathArgument() 
+    {
+        $process = new pbsSystemProcess( 'php tests/bin/cat' );
+        $process->argument( new pbsPathArgument( 'tests/data/workingDirectoryTest.sh' ) );
+        $process->execute();
+
+        $this->assertEquals(
+            file_get_contents( 'tests/data/workingDirectoryTest.sh' ),
+            $process->stdoutOutput
+        );
+    }
 }

@@ -281,8 +281,11 @@ class pbsSystemProcess
 
     /**
      * Add an argument to the system process
+     *
+     * Accepts pbsArgument objects, or any scalar, which is then wrapped into 
+     * an argument object for BC.
      * 
-     * @param string $argument Argument to add to the commandline
+     * @param mixed $argument Argument to add to the commandline
      * @param bool $alreadyEscaped The given argument will not be escaped. If
      * you decide to pass true here, you need to make sure the argument
      * supplied is not harmful and treated as one argument. Therfore you may
@@ -291,13 +294,20 @@ class pbsSystemProcess
      * interface)
      */
     public function argument( $argument, $alreadyEscaped = false ) 
-    {       
-        $this->commandParts[] = array( 
-            ( $alreadyEscaped === true )
-          ? ( self::UNESCAPEDARGUMENT )
-          : ( self::ARGUMENT ),
-            $argument
-        );
+    {
+        if ( !$argument instanceof pbsArgument )
+        {
+            if ( $alreadyEscaped )
+            {
+                $argument = new pbsUnescapedArgument( $argument );
+            }
+            else
+            {
+                $argument = new pbsEscapedArgument( $argument );
+            }
+        }
+
+        $this->commandParts[] = array( self::ARGUMENT, $argument );
         return $this;
     }
 
@@ -638,10 +648,7 @@ class pbsSystemProcess
                     $cmd .= escapeshellcmd( $part[1] );
                 break;
                 case self::ARGUMENT:
-                    $cmd .= escapeshellarg( $part[1] );
-                break;
-                case self::UNESCAPEDARGUMENT:
-                    $cmd .= $part[1];
+                    $cmd .= $part[1]->getPrepared();
                 break;
                 case self::SYSTEMPROCESS:
                     $cmd .= '| ' . $this->buildCommand( $part[1] );
