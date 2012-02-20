@@ -1,6 +1,8 @@
 <?php
 require_once( __DIR__ . '/environment.php' );
 
+namespace SystemProcess;
+
 class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 {
     protected static $win = false;
