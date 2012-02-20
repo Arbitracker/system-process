@@ -1,67 +1,80 @@
 <?php
-require_once( __DIR__ . '/environment.php' );
-
 namespace SystemProcess;
 
-class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
+use \PHPUnit_Framework_TestCase;
+
+use \SystemProcess\NonZeroExitCodeException;
+use \SystemProcess\Argument\PathArgument;
+
+spl_autoload_register(function( $class )
+{
+    $file = __DIR__ . '/../../../main/php/' . strtr( $class, '\\', '/' ) . '.php';
+    if ( file_exists( $file ) )
+    {
+        include $file;
+    }
+} );
+
+class SystemProcessTest extends PHPUnit_Framework_TestCase
 {
     protected static $win = false;
 
-    public static function suite()
+    public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
+
         self::$win = ( strtoupper( substr( PHP_OS, 0, 3)) === 'WIN' );
-        return new PHPUnit_Framework_TestSuite( __CLASS__ );
     }
 
-    public function testSimpleExecution() 
+    public function testSimpleExecution()
     {
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
-        $this->assertEquals( $process->execute(), 0 );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( PHP_EOL, $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
     }
 
     public function testInvalidExecutable() 
     {       
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/not_existant_file' );
-        $this->assertNotEquals( $process->execute(), 0 );
+        $process = new SystemProcess( __DIR__ . '/data' . '/not_existant_file' );
+        $this->assertNotEquals( 0, $process->execute() );
         $this->assertEquals( "", $process->stdoutOutput );
         $this->assertNotSame( false, strpos( $process->stderrOutput, 'not_existant_file' ) );
     }
 
     public function testOneSimpleArgument() 
     {       
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( 'foobar' );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "foobar" . PHP_EOL, $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
     }
     
     public function testOneEscapedArgument() 
     {       
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( "foobar 42" );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "foobar 42" . PHP_EOL, $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
     }
 
     public function testTwoArguments() 
     {       
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( "foobar" )->argument( "42" );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "foobar 42" . PHP_EOL, $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
     }
 
     public function testStdoutOutputRedirection() 
     {       
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( "foobar" );
-        $process->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
-        $this->assertEquals( $process->execute(), 0 );
+        $process->redirect( SystemProcess::STDOUT, SystemProcess::STDERR );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "", $process->stdoutOutput );
         $this->assertEquals( "foobar" . PHP_EOL, $process->stderrOutput );
     }
@@ -69,10 +82,10 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
     public function testStdoutOutputRedirectionToFile() 
     {       
         $tmpfile = tempnam( sys_get_temp_dir(), "pbs" );
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( "foobar" );
-        $process->redirect( pbsSystemProcess::STDOUT, $tmpfile );
-        $this->assertEquals( $process->execute(), 0 );
+        $process->redirect( SystemProcess::STDOUT, $tmpfile );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "", $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
         $this->assertEquals( "foobar" . PHP_EOL, file_get_contents( $tmpfile ) );
@@ -81,10 +94,10 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testStdoutOutputRedirectionBeforeArgument() 
     {       
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
-        $process->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR )
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
+        $process->redirect( SystemProcess::STDOUT, SystemProcess::STDERR )
                 ->argument( "foobar" );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "", $process->stdoutOutput );
         $this->assertEquals( "foobar" . PHP_EOL, $process->stderrOutput );
     }
@@ -92,10 +105,10 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
     public function testStdoutOutputRedirectionToFileBeforeArgument() 
     {       
         $tmpfile = tempnam( sys_get_temp_dir(), "pbs" );
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
-        $process->redirect( pbsSystemProcess::STDOUT, $tmpfile )
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
+        $process->redirect( SystemProcess::STDOUT, $tmpfile )
                 ->argument( "foobar" );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "", $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
         $this->assertEquals( "foobar" . PHP_EOL, file_get_contents( $tmpfile ) );
@@ -104,26 +117,23 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testSimplePipe() 
     {
-        $outputProcess = new pbsSystemProcess( 'php tests/bin/cat' );
-        $process       = new pbsSystemProcess( 'php tests/bin/echo' );
+        $outputProcess = new SystemProcess( 'php ' . $this->getBinPath( 'cat' ) );
+        $process       = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $process->argument( 'foobar' )
                 ->pipe( $outputProcess );
-        $this->assertEquals( $process->execute(), 0 );
+        $this->assertEquals( 0, $process->execute() );
         $this->assertEquals( "foobar" . PHP_EOL, $process->stdoutOutput );
         $this->assertEquals( "", $process->stderrOutput );
     }
 
+    /**
+     * @return void
+     * @expectedException \SystemProcess\RecursivePipeException
+     */
     public function testRecursivePipe() 
     {
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
-        try 
-        {
-            $process->pipe( $process );
-            $this->fail( 'pbsSystemProcessRecursivePipeException expected.' );
-        }
-        catch ( pbsSystemProcessRecursivePipeException $e ) 
-        {
-        }
+        $process = new SystemProcess( 'php' . $this->getBinPath( 'echo' ) );
+        $process->pipe( $process );
     }
 
     public function testCustomEnvironment() 
@@ -133,33 +143,33 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             $this->markTestSkipped( 'Test skipped, because Windows does not support evaluation of environment variables.' );
         }
 
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
-        $this->assertEquals( 
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
+        $this->assertEquals(
+            0,
             $process->argument( '"${environment_test}"', true )
                     ->environment( 
                         array( 'environment_test' => 'foobar' )
                     )
-                    ->execute(),
-            0
+                    ->execute()
        );
        $this->assertEquals( $process->stdoutOutput, "foobar" . PHP_EOL );
     }
 
     public function testCustomWorkingDirectory() 
     {
-        $process = new pbsSystemProcess(
+        $process = new SystemProcess(
             ( self::$win ? 'workingDirectoryTest.bat' : './workingDirectoryTest.sh' ) );
-        $this->assertEquals( 
-            $process->workingDirectory( __DIR__ . '/data' )
-                    ->execute(),
-            0
+        $this->assertEquals(
+            0,
+            $process->workingDirectory( $this->getResourceDir() . '/data' )
+                    ->execute()
         );
         $this->assertEquals( $process->stdoutOutput, "foobar" . PHP_EOL );
     }
 
     public function testAsyncExecution() 
     {
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $pipes = $process->argument( 'foobar' )
                          ->execute( true );
         $output = '';
@@ -167,13 +177,13 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         {
             $output .= fread( $pipes[1], 4096 );
         }
-        $this->assertEquals( $process->close(), 0 );
+        $this->assertEquals( 0, $process->close() );
         $this->assertEquals( $output, "foobar" . PHP_EOL );
     }
 
     public function testWriteToStdin() 
     {
-        $process = new pbsSystemProcess( 'php tests/bin/cat' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'cat' ) );
         $pipes = $process->execute( true );
         fwrite( $pipes[0], "foobar" );
         fclose( $pipes[0] );
@@ -182,7 +192,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         {
             $output .= fread( $pipes[1], 4096 );
         }
-        $this->assertEquals( $process->close(), 0 );
+        $this->assertEquals( 0, $process->close() );
         $this->assertEquals( $output, "foobar" );
     }
 
@@ -193,9 +203,9 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             $this->markTestSkipped( 'Test skipped, because Windows does not know custom file descriptors.' );
         }
 
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/fileDescriptorTest' );
-        $pipes = $process->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
-                         ->descriptor( 5, pbsSystemProcess::PIPE, 'w' )
+        $process = new SystemProcess( $this->getDataPath( 'fileDescriptorTest' ) );
+        $pipes = $process->descriptor( 4, SystemProcess::PIPE, 'r' )
+                         ->descriptor( 5, SystemProcess::PIPE, 'w' )
                          ->execute( true );
         fwrite( $pipes[4], "foobar" );
         fclose( $pipes[4] );
@@ -220,24 +230,26 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         }
 
         $tmpfile = tempnam( sys_get_temp_dir(), "pbs" );
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/fileDescriptorTest' );
-        $pipes = $process->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
-                         ->descriptor( 5, pbsSystemProcess::FILE, $tmpfile, 'a' )
-                         ->execute( true );
+        $process = new SystemProcess( $this->getDataPath( 'fileDescriptorTest' ) );
+        $pipes = $process->descriptor( 4, SystemProcess::PIPE, 'r' )
+             ->descriptor( 5, SystemProcess::FILE, $tmpfile, 'a' )
+             ->execute( true );
+
         fwrite( $pipes[4], "foobar" );
         fclose( $pipes[4] );
-        $this->assertEquals( $process->close(), 0 );
-        $this->assertEquals( file_get_contents( $tmpfile ), 'foobar' );
+
+        $this->assertEquals( 0, $process->close() );
+        $this->assertEquals( 'foobar', file_get_contents( $tmpfile ) );
         unlink( $tmpfile );
     }
 
     public function testAsyncPipe() 
     {
-        $grep = new pbsSystemProcess( 'grep' );
+        $grep = new SystemProcess( 'grep' );
         $grep->argument( '-v' )
              ->argument( 'baz' );
 
-        $process = new pbsSystemProcess( 'php tests/bin/echo' );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'echo' ) );
         $pipes = $process->argument( "foobar\nbaz" )
                          ->pipe( $grep )
                          ->execute( true );
@@ -257,101 +269,80 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
             $this->markTestSkipped( 'Test skipped, because Windows signal handling is completely broken.' );
         }
 
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/signalTest.php' );
+        $process = new SystemProcess( $this->getDataPath( 'signalTest.php' ) );
         $pipes = $process->execute( true );
         $output = '';
         while( !feof( $pipes[1] ) ) 
         {
             $output .= fread( $pipes[1], 4096 );
-            if ( $output === "ready" ) 
+            if ( $output === "ready" )
             {
                 $output = '';
-                $process->signal( pbsSystemProcess::SIGUSR1 );                
+                $process->signal( SystemProcess::SIGUSR1 );
             }
         }
+
         $this->assertEquals( 0, $process->close() );
-        $this->assertEquals( $output, "SIGUSR1 recieved" );
+        $this->assertEquals( "SIGUSR1 recieved", $output );
     }
 
     public function testFluentInterface() 
     {
         // This process should not be executed. It just tests the fluent
         // interface pattern.
-        $process = new pbsSystemProcess( 'foobar' );
+        $process = new SystemProcess( 'foobar' );
         $process->argument( '42' )
-                ->pipe( new pbsSystemProcess( 'baz' ) )
-                ->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR )
-                ->environment( array( 'foobar' => '42' ) )
-                ->workingDirectory( __DIR__ . '/data' )
-                ->descriptor( 4, pbsSystemProcess::PIPE, 'r' )
-                ->argument( '23' );
+            ->pipe( new SystemProcess( 'baz' ) )
+            ->redirect( SystemProcess::STDOUT, SystemProcess::STDERR )
+            ->environment( array( 'foobar' => '42' ) )
+            ->workingDirectory( __DIR__ . '/data' )
+            ->descriptor( 4, SystemProcess::PIPE, 'r' )
+            ->argument( '23' );
     }
 
+    /**
+     * @return void
+     * @expectedException \SystemProcess\NonZeroExitCodeException
+     */
     public function testNonZeroReturnCodeException() 
     {
-        $process = new pbsSystemProcess( 'php' );
+        $process = new SystemProcess( 'php' );
         $process->nonZeroExitCodeException = true;
         $process->argument( '-r')->argument( 'exit( 1 );' );
-        try 
-        {
-            $process->execute();
-            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
-        }
-        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
-        {
-            /* Expected exception */
-        }
+        $process->execute();
     }
 
+    /**
+     * @return void
+     * @expectedException \SystemProcess\NonZeroExitCodeException
+     */
     public function testNonZeroReturnCodeExceptionStdout() 
     {
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/nonZeroExitCodeOutputTest.' . ( self::$win ? 'bat' : 'sh' ) );
+        $process = new SystemProcess( $this->getDataPath( 'nonZeroExitCodeOutputTest.' . ( self::$win ? 'bat' : 'sh' ) ) );
         $process->nonZeroExitCodeException = true;
         $process->argument( 'foobar' );
-        
-        try 
-        {
-            $process->execute();
-            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
-        }
-        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
-        {
-            /* Expected exception */
-            $this->assertEquals( 
-                "foobar", $e->stdoutOutput,
-                "Expected stdoutOutput not available in exception."
-            );
-        }
+        $process->execute();
     }
-    
+
+    /**
+     * @return void
+     * @expectedException \SystemProcess\NonZeroExitCodeException
+     */
     public function testNonZeroReturnCodeExceptionStderr() 
     {
-        $process = new pbsSystemProcess( __DIR__ . '/data' . '/nonZeroExitCodeOutputTest.' . ( self::$win ? 'bat' : 'sh' ) );
+        $process = new SystemProcess( $this->getDataPath( 'nonZeroExitCodeOutputTest.' . ( self::$win ? 'bat' : 'sh' ) ) );
         $process->nonZeroExitCodeException = true;
         $process->argument( 'foobar' );
-        $process->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
-        
-        try 
-        {
-            $process->execute();
-            $this->fail( 'Expected pbsSystemProcessNonZeroExitCodeException' );
-        }
-        catch( pbsSystemProcessNonZeroExitCodeException $e ) 
-        {
-            /* Expected exception */
-            $this->assertEquals( 
-                "foobar", $e->stderrOutput,
-                "Expected stderrOutput not available in exception."
-            );
-        }
+        $process->redirect( SystemProcess::STDOUT, SystemProcess::STDERR );
+        $process->execute();
     }
 
     public function testToStringMagicMethod() 
     {
-        $process = new pbsSystemProcess( 'someCommand' );
+        $process = new SystemProcess( 'someCommand' );
         $process->argument( 'someArgument' )
                 ->argument( '42' )
-                ->redirect( pbsSystemProcess::STDOUT, pbsSystemProcess::STDERR );
+                ->redirect( SystemProcess::STDOUT, SystemProcess::STDERR );
 
         if ( self::$win )
         {
@@ -376,7 +367,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         {
             $err[] = (string)$i;
         }
-        $e = new pbsSystemProcessNonZeroExitCodeException( 
+        $e = new NonZeroExitCodeException(
             1,
             'foobar',
             implode( PHP_EOL, $err ),
@@ -396,7 +387,7 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
         {
             $err[] = (string)$i;
         }
-        $e = new pbsSystemProcessNonZeroExitCodeException( 
+        $e = new NonZeroExitCodeException(
             1,
             'foobar',
             implode( PHP_EOL, $err ),
@@ -411,13 +402,45 @@ class pbsSystemProcessTests extends PHPUnit_Framework_TestCase
 
     public function testPathArgument()
     {
-        $process = new pbsSystemProcess( 'php tests/bin/cat' );
-        $process->argument( new pbsPathArgument( 'tests/data/workingDirectoryTest.sh' ) );
+        $process = new SystemProcess( 'php ' . $this->getBinPath( 'cat' ) );
+        $process->argument( new PathArgument( $this->getDataPath( 'workingDirectoryTest.sh' ) ) );
         $process->execute();
 
         $this->assertEquals(
-            file_get_contents( 'tests/data/workingDirectoryTest.sh' ),
+            file_get_contents( $this->getDataPath( 'workingDirectoryTest.sh' ) ),
             $process->stdoutOutput
         );
+    }
+
+    /**
+     * Returns the real path for the given binary.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function getBinPath( $name )
+    {
+        return realpath( $this->getResourceDir() . '/bin/' . $name );
+    }
+
+    /**
+     * Returns the real path for the given data file.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function getDataPath( $name )
+    {
+        return realpath( $this->getResourceDir() . '/data/' . $name );
+    }
+
+    /**
+     * Returns the directory with the test resources.
+     *
+     * @return string
+     */
+    private function getResourceDir()
+    {
+        return realpath( __DIR__ . '/../../resources/' );
     }
 }

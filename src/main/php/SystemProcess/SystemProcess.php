@@ -22,9 +22,9 @@
 
 namespace SystemProcess;
 
-use SystemProcess\Argument;
-use SystemProcess\Argument\EscapedArgument;
-use SystemProcess\Argument\UnescapedArgument;
+use \SystemProcess\Argument;
+use \SystemProcess\Argument\EscapedArgument;
+use \SystemProcess\Argument\UnescapedArgument;
 use \SystemProcess\InvalidCustomDescriptorException;
 
 /**
