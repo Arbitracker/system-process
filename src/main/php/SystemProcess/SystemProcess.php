@@ -22,6 +22,7 @@
 
 namespace SystemProcess;
 
+use \OutOfBoundsException;
 use \SystemProcess\Argument;
 use \SystemProcess\Argument\EscapedArgument;
 use \SystemProcess\Argument\UnescapedArgument;
@@ -103,6 +104,11 @@ use \SystemProcess\InvalidCustomDescriptorException;
  * @copyright Copyright (C) 2008 Jakob Westhoff. All rights reserved.
  * @author Jakob Westhoff <jakob@php.net> 
  * @license LGPLv3
+ *
+ * @property-read string $stdoutOutput Standard output produced by a process.
+ * @property-read string $stderrOutput Standard error output produced by a process.
+ * @property-read boolean $nonZeroExitCodeException Will be true when the called
+ *                process returns an exit code that it not zero.
  */
 class SystemProcess
 {
@@ -238,7 +244,7 @@ class SystemProcess
     {
         if ( array_key_exists( $k, $this->attributes ) !== true ) 
         {
-            throw new pbsAttributeException( pbsAttributeException::NON_EXISTANT, $k );
+            throw new OutOfBoundsException( "Property \${$k} not exists." );
         }
 
         // None of the attributes are writeable
@@ -246,9 +252,10 @@ class SystemProcess
         {
             case 'nonZeroExitCodeException':
                 $this->attributes['nonZeroExitCodeException'] = (bool)$v;
-            break;
+                break;
+
             default:
-                throw new pbsAttributeException( pbsAttributeException::WRITE, $k );
+                throw new OutOfBoundsException( "Property \${$k} is not writeable." );
         }
     }
 
@@ -262,7 +269,7 @@ class SystemProcess
     {
         if ( array_key_exists( $k, $this->attributes ) !== true ) 
         {
-            throw new pbsAttributeException( pbsAttributeException::NON_EXISTANT, $k );
+            throw new OutOfBoundsException( "Property \${$k} not exists." );
         }
 
         // All existant attributes are readable
