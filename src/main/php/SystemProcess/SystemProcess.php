@@ -17,7 +17,8 @@
  * along with systemProcess; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPL
+ * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPLv3
+ * @version $Revision$
  */
 
 namespace SystemProcess;
@@ -100,15 +101,15 @@ use \SystemProcess\InvalidCustomDescriptorException;
  * available also. Take a look at the api documentation for these type of
  * methods.
  * 
- * @version //autogen//
- * @copyright Copyright (C) 2008 Jakob Westhoff. All rights reserved.
- * @author Jakob Westhoff <jakob@php.net> 
+ * @version $Revision$
  * @license LGPLv3
  *
- * @property-read string $stdoutOutput Standard output produced by a process.
- * @property-read string $stderrOutput Standard error output produced by a process.
- * @property-read boolean $nonZeroExitCodeException Will be true when the called
- *                process returns an exit code that it not zero.
+ * @property-read string $stdoutOutput
+ *                Standard output produced by a process.
+ * @property-read string $stderrOutput
+ *                Standard error output produced by a process.
+ * @property-read boolean $nonZeroExitCodeException
+ *                Will be true when the called process returns an exit code that it not zero.
  */
 class SystemProcess
 {
@@ -417,7 +418,7 @@ class SystemProcess
      * @param string $target If the PIPE type is used this is whether "w" to
      * allow the process writing to the pipe or "r" to allow the process
      * reading from the pipe
-     * @param string filemode If the type is FILE this is the mode to open the
+     * @param string $filemode If the type is FILE this is the mode to open the
      * file with, e.g. "a"
      * @return \SystemProcess\SystemProcess The object this method was called on
      * (fluent interface)
