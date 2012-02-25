@@ -1,6 +1,6 @@
 <?php
 /**
- * systemProcess escaped argument class
+ * systemProcess argument base class
  *
  * This file is part of systemProcess.
  *
@@ -17,7 +17,8 @@
  * along with systemProcess; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPL
+ * @version $Revision$
+ * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPLv3
  */
 
 namespace SystemProcess\Argument;
@@ -30,8 +31,7 @@ use \SystemProcess\Argument;
  * Argument, which values are prepared for sane usage in calls, disabling 
  * injection.
  * 
- * @version //autogen//
- * @author Kore Nordmann <kore@php.net>
+ * @version $Revision$
  * @license LGPLv3
  */
 class EscapedArgument extends Argument

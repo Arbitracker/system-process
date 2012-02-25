@@ -17,7 +17,8 @@
  * along with systemProcess; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPL
+ * @version $Revision$
+ * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPLv3
  */
 
 namespace SystemProcess;
@@ -27,10 +28,9 @@ namespace SystemProcess;
  *
  * Base class, which should be extended for argument types, which require 
  * special handling.
- * 
- * @version //autogen//
- * @author Kore Nordmann <kore@php.net>
- * @license LGPLv3
+ *
+ * @version $Revision$
+ * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPL
  */
 abstract class Argument
 {
