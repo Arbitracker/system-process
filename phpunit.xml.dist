@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit>
+<phpunit bootstrap="src/test/php/SystemProcess/bootstrap.php">
     <testsuites>
         <testsuite name="SystemProcess TestSuite">
 			<directory>src/test/php</directory>
