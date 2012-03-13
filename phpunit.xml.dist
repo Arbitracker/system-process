@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit>
+    <testsuites>
+        <testsuite name="SystemProcess TestSuite">
+			<directory>src/test/php</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>src/main</directory>
+        </whitelist>
+    </filter>
+</phpunit>
