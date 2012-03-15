@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://pear.php.net/dtd/package-2.0"
+         xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         packagerversion="1.9.0"
+         version="2.0"
+         xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd
+                             http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+
+    <name>SystemProcess</name>
+    <channel>pear.arbitracker.org</channel>
+    <summary>SystemProcess - Execute system commands with ease</summary>
+    <description>
+        SystemProcess was designed having great flexibility combined with a
+        maximum amount of comfort in mind. The fluent interface pattern is used
+        to provide an easy and readable way of defining complex command strings
+        as well as simple ones. There is no need to handle the escaping of your
+        arguments as this will be done automatically.
+    </description>
+    <lead>
+        <name>Jakob Westhoff</name>
+        <user>jakob</user>
+        <email>jakob@westhoffswelt.de</email>
+        <active>yes</active>
+    </lead>
+    <developer>
+        <name>Kore Nordmann</name>
+        <user>kore</user>
+        <email>mail@kore-nordmann.de</email>
+        <active>yes</active>
+    </developer>
+    <developer>
+        <name>Manuel Pichler</name>
+        <user>mapi</user>
+        <email>mapi@manuel-pichler.de</email>
+        <active>yes</active>
+    </developer>
+    <date>@date_release@</date>
+    <version>
+        <release>@version_release@</release>
+        <api>@version_api@</api>
+    </version>
+    <stability>
+        <release>@stability_release@</release>
+        <api>@stability_api@</api>
+    </stability>
+    <license uri="http://www.gnu.org/licenses/lgpl-3.0.txt">LGPLv3</license>
+    <notes>
+        This release contains an improvement in PHP_Depend's memory consumption.
+        We have optimized the internal data structures in such a way that the
+        memory footprint was reduced by ~30%. These values were measured for
+        currently popular frameworks with a medium to large sized code base. The
+        tests were run under ubuntu with PHP 5.2.17 and PHP 5.3.6.
+    </notes>
+
+    <contents>
+        <dir name="Dummy">
+            <file name="File.php" role="php">
+                <tasks:replace from="@package_version@" to="version" type="package-info"/>
+                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config"/>
+                <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config"/>
+            </file>
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.3.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.6.0</min>
+            </pearinstaller>
+            <extension>
+                <name>pcre</name>
+            </extension>
+        </required>
+    </dependencies>
+
+    <phprelease />
+
+</package>

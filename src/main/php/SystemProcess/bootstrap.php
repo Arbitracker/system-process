@@ -31,7 +31,12 @@ namespace SystemProcess;
  */
 spl_autoload_register(function( $class )
 {
-    $file = __DIR__ . '/../../../main/php/' . strtr( $class, '\\', '/' ) . '.php';
+    if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) )
+    {
+        return;
+    }
+
+    $file = __DIR__ . '/../' . strtr( $class, '\\', '/' ) . '.php';
     if ( file_exists( $file ) )
     {
         include $file;

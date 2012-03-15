@@ -34,6 +34,7 @@ use \SystemProcess\Argument\PathArgument;
  * @license http://www.gnu.org/licenses/lgpl-3.0.txt LGPLv3
  * @version $Revision$
  * @group unittest
+ * @group integrationtest
  */
 class SystemProcessTest extends PHPUnit_Framework_TestCase
 {
