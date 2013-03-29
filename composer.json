@@ -1,0 +1,8 @@
+{
+    "name":        "Arbit/SystemProcess",
+    "description": "System process execution library",
+    "version":     "0.1-dev",
+    "autoload":    {
+        "psr-0": { "Arbit\\SystemProcess": "src/main/php/" }
+    }
+}
