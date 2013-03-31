@@ -1,6 +1,7 @@
 {
     "name":        "arbit/system-process",
     "description": "System process execution library",
+    "license": "LGPL-3.0+",
     "autoload":    {
         "psr-0": { "SystemProcess": "src/main/php/" }
     }
