@@ -1,5 +1,5 @@
 {
-    "name":        "Arbit/SystemProcess",
+    "name":        "arbit/system-process",
     "description": "System process execution library",
     "version":     "0.1-dev",
     "autoload":    {
